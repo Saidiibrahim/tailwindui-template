@@ -11,6 +11,7 @@ import {
   InstagramIcon,
   LinkedInIcon,
   TwitterIcon,
+  MediumIcon,
 } from '@/components/SocialIcons'
 import logoAirbnb from '@/images/logos/airbnb.svg'
 import logoFacebook from '@/images/logos/facebook.svg'
@@ -139,35 +140,31 @@ function Newsletter() {
 function Resume() {
   let resume = [
     {
-      company: 'Planetaria',
-      title: 'CEO',
+      company: 'Novita Services',
+      title: 'Logistics Officer',
       logo: logoPlanetaria,
-      start: '2019',
+      start: '2022',
       end: {
         label: 'Present',
         dateTime: new Date().getFullYear(),
       },
     },
     {
-      company: 'Airbnb',
-      title: 'Product Designer',
+      company: 'Football South Australia',
+      title: 'Referee',
       logo: logoAirbnb,
-      start: '2014',
-      end: '2019',
+      start: '2020',
+      end: {
+        label: 'Present',
+        dateTime: new Date().getFullYear(),
+      },
     },
     {
-      company: 'Facebook',
-      title: 'iOS Software Engineer',
+      company: 'The University of South Australia',
+      title: 'Research Assistant',
       logo: logoFacebook,
-      start: '2011',
-      end: '2014',
-    },
-    {
-      company: 'Starbucks',
-      title: 'Shift Supervisor',
-      logo: logoStarbucks,
-      start: '2008',
-      end: '2011',
+      start: '08/2019',
+      end: '12/2019',
     },
   ]
 
@@ -251,7 +248,7 @@ export default function Home({ articles }) {
     <>
       <Head>
         <title>
-          Spencer Sharp - Software designer, founder, and amateur astronaut
+          Ibrahim - Software developer, AI tinkerer, and football referee.
         </title>
         <meta
           name="description"
@@ -261,32 +258,30 @@ export default function Home({ articles }) {
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Software designer, founder, and amateur astronaut.
+            Software developer, AI tinkerer, and football referee.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I’m Spencer, a software designer and entrepreneur based in New York
-            City. I’m the founder and CEO of Planetaria, where we develop
-            technologies that empower regular people to explore space on their
-            own terms.
+            Hi 👋🏾. I’m Ibrahim, a self-taught software developer and AI tinkerer based in Adelaide,
+            South Australia. I’m driven to inspire the world through AI and software development.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
-              href="https://twitter.com"
+              href="https://twitter.com/IbrahimSaidi94"
               aria-label="Follow on Twitter"
               icon={TwitterIcon}
             />
             <SocialLink
-              href="https://instagram.com"
-              aria-label="Follow on Instagram"
-              icon={InstagramIcon}
+              href="https://medium.com/@ibrahimsaidi94"
+              aria-label="Follow on Medium"
+              icon={MediumIcon}
             />
             <SocialLink
-              href="https://github.com"
+              href="https://github.com/Saidiibrahim"
               aria-label="Follow on GitHub"
               icon={GitHubIcon}
             />
             <SocialLink
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/ibrahimsaidi/"
               aria-label="Follow on LinkedIn"
               icon={LinkedInIcon}
             />

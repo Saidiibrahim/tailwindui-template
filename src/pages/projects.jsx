@@ -11,38 +11,38 @@ import logoPlanetaria from '@/images/logos/planetaria.svg'
 
 const projects = [
   {
-    name: 'Planetaria',
+    name: 'ChatGPT Assistant',
     description:
       'Creating technology to empower civilians to explore space on their own terms.',
-    link: { href: 'http://planetaria.tech', label: 'planetaria.tech' },
+    link: { href: 'https://github.com/Saidiibrahim/chatgpt_assistant', label: 'github.com' },
     logo: logoPlanetaria,
   },
   {
-    name: 'Animaginary',
+    name: 'Stock Screening App',
     description:
-      'High performance web animation library, hand-written in optimized WASM.',
-    link: { href: '#', label: 'github.com' },
+      'A stock screening app created with Streamlit.',
+    link: { href: 'https://github.com/Saidiibrahim/Stock_Screener', label: 'github.com' },
     logo: logoAnimaginary,
   },
   {
-    name: 'HelioStream',
+    name: 'Chatbot',
     description:
-      'Real-time video streaming library, optimized for interstellar transmission.',
-    link: { href: '#', label: 'github.com' },
+      'Chatbot made with GPT4 from OpenAI....',
+    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
     logo: logoHelioStream,
   },
   {
-    name: 'cosmOS',
+    name: 'FileQnA',
     description:
-      'The operating system that powers our Planetaria space shuttles.',
-    link: { href: '#', label: 'github.com' },
+      'An app able to answer questions based on a file.',
+    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
     logo: logoCosmos,
   },
   {
-    name: 'OpenShuttle',
+    name: 'DataBot',
     description:
-      'The schematics for the first rocket I designed that successfully made it to orbit.',
-    link: { href: '#', label: 'github.com' },
+      'Your own personal data analyst.',
+    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
     logo: logoOpenShuttle,
   },
 ]
@@ -62,7 +62,7 @@ export default function Projects() {
   return (
     <>
       <Head>
-        <title>Projects - Spencer Sharp</title>
+        <title>Projects - My code in the wild</title>
         <meta
           name="description"
           content="Things I’ve made trying to put my dent in the universe."

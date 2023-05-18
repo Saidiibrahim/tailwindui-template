@@ -1,3 +1,14 @@
+## TODO
+
+- [ ] Fix About page - Use ChatGPT for content.
+- [ ] Add page for books I read, or I've read.
+- [ ] Update links to keep current page.
+- [ ] Domain transfer from AWS to Vercel.
+- [ ] Include different images ( refereeing, Midjourney AI).
+- [ ] Update Articles content.
+- [ ] Work on projects mentioned.
+- [ ] Mention URL on Medium and Linkedin.
+
 # Spotlight
 
 Spotlight is a [Tailwind UI](https://tailwindui.com) site template built using [Tailwind CSS](https://tailwindcss.com) and [Next.js](https://nextjs.org).

@@ -48,48 +48,67 @@ export default function Uses() {
               through with our various launch simulations.
             </Tool>
             <Tool title="AirPods Max">
-              The only display on the market if you want something HiDPI and
-              bigger than 27”. When you’re working at planetary scale, every
-              pixel you can get counts.
+              Music plays a vital role in my daily routine,
+              whether I`m working on complex coding challenges or
+              diving into an engaging study session. With my AirPods Max,
+              I`m enveloped in my favorite melodies and tunes.
+              They create a personal soundscape that fosters my focus and enhances my productivity,
+              turning work and study hours into an enjoyable journey.
             </Tool>
           </ToolsSection>
           <ToolsSection title="Development tools">
             <Tool title="PyCharm Professional">
-              I don’t care if it’s missing all of the fancy IDE features
-              everyone else relies on, Sublime Text is still the best text
-              editor ever made.
+              As a software developer, I need a robust and reliable IDE,
+              and PyCharm Professional hits the mark. Its intelligent code
+              assistance and extensive range of handy features streamline my
+              coding workflow, making it easier to write, debug, and refactor Python code.
+              The overall result? A significant boost in productivity and a smoother coding
+              experience.
             </Tool>
             <Tool title="DataGrip">
-              I’m honestly not even sure what features I get with this that
-              aren’t just part of the macOS Terminal but it’s what I use.
+              Managing databases is an integral part of my work, and DataGrip is my
+              go-to tool for that. It supports various databases and provides smart
+              code completion, on-the-fly error detection, and even version control
+              system integration. It`s more than just a database tool - it`s a comprehensive
+              solution that makes handling databases intuitive and hassle-free.
             </Tool>
             <Tool title="iTerm2">
-              Great software for working with databases. Has saved me from
-              building about a thousand admin interfaces for my various projects
-              over the years.
+              iTerm2 enhances my command-line experience with its array of powerful features.
+              The split-pane views, search functionality, and extensive customization options
+              it provides all contribute to a superior terminal experience. Whether it`s scripting
+              or running development servers, iTerm2 proves itself as an invaluable asset in my toolkit.
             </Tool>
           </ToolsSection>
           <ToolsSection title="Design">
             <Tool title="Figma">
-              We started using Figma as just a design tool but now it’s become
-              our virtual whiteboard for the entire company. Never would have
-              expected the collaboration features to be the real hook.
+              When it comes to design tools, Figma has become my go-to. Beyond just a design tool,
+              it`s our virtual whiteboard for brainstorming, prototyping, and collaboration.
+              The seamless real-time collaboration feature is a game-changer,
+              enabling us to work together on designs no matter where we are.
+            </Tool>
+            <Tool title="MidJourney AI">
+              When I need original, creative images and graphics for my apps,
+              MidJourney AI is my go-to tool. It`s like having a personal graphic
+              designer at my disposal. Its AI capabilities help me to generate stunning
+              visuals that are unique and resonate with my user base.
             </Tool>
           </ToolsSection>
           <ToolsSection title="Productivity">
-            <Tool title="Microsoft ToDo">
-              It’s not the newest kid on the block but it’s still the fastest.
-              The Sublime Text of the application launcher world.
+            <Tool title="JetBrains YouTrack">
+              This is my go-to task management and agile project management tool.
+              It`s remarkably flexible and suits perfectly for my workflow.
+              I can effortlessly manage my tasks, sprints, and backlogs, ensuring that
+              nothing gets lost in the shuffle.
             </Tool>
-            <Tool title="Trello">
-              Using a daily notes system instead of trying to keep things
-              organized by topics has been super powerful for me. And with
-              Reflect, it’s still easy for me to keep all of that stuff
-              discoverable by topic even though all of my writing happens in the
-              daily note.
+            <Tool title="ChatGPT">
+              I find ChatGPT incredibly useful for brainstorming, code review,
+              and as a writing assistant. It`s like having an AI-powered co-worker who`s always
+              ready to provide insights and assist with the development process. It really has become
+              an essential part of my productivity toolkit.
             </Tool>
           </ToolsSection>
-            <ToolsSection title="Books">
+          {/*
+          <ToolsSection title="Books">
             <Tool title="Joys of Compounding">
               It’s not the newest kid on the block but it’s still the fastest.
               The Sublime Text of the application launcher world.
@@ -111,6 +130,7 @@ export default function Uses() {
               do the work and get some momentum going.
             </Tool>
           </ToolsSection>
+          */}
         </div>
       </SimpleLayout>
     </>

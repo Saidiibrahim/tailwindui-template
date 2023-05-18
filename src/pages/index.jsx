@@ -16,6 +16,9 @@ import {
 import logoAirbnb from '@/images/logos/airbnb.svg'
 import logoFacebook from '@/images/logos/facebook.svg'
 import logoPlanetaria from '@/images/logos/planetaria.svg'
+import logoReferee from '@/images/logos/referee.svg'
+import logoNovita from '@/images/logos/novita.svg'
+import logoUnisa from '@/images/logos/unisa.svg'
 import logoStarbucks from '@/images/logos/starbucks.svg'
 import image1 from '@/images/photos/image-1.jpg'
 import image2 from '@/images/photos/image-2.jpg'
@@ -142,7 +145,7 @@ function Resume() {
     {
       company: 'Novita Services',
       title: 'Logistics Officer',
-      logo: logoPlanetaria,
+      logo: logoNovita,
       start: '2022',
       end: {
         label: 'Present',
@@ -152,7 +155,7 @@ function Resume() {
     {
       company: 'Football South Australia',
       title: 'Referee',
-      logo: logoAirbnb,
+      logo: logoReferee,
       start: '2020',
       end: {
         label: 'Present',
@@ -162,7 +165,7 @@ function Resume() {
     {
       company: 'The University of South Australia',
       title: 'Research Assistant',
-      logo: logoFacebook,
+      logo: logoUnisa,
       start: '08/2019',
       end: '12/2019',
     },

@@ -1,13 +1,13 @@
 ## TODO
 
-- [ ] Fix About page - Use ChatGPT for content.
-- [ ] Add page for books I read, or I've read.
+- [x] Fix About page - Use ChatGPT for content.
 - [ ] Update links to keep current page.
 - [ ] Domain transfer from AWS to Vercel.
 - [ ] Include different images ( refereeing, Midjourney AI).
 - [ ] Update Articles content.
 - [ ] Work on projects mentioned.
 - [ ] Mention URL on Medium and Linkedin.
+- [ ] Add page for books I read, or I've read.
 
 # Spotlight
 

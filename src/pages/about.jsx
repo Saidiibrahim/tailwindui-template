@@ -17,6 +17,8 @@ function SocialLink({ className, href, children, icon: Icon }) {
     <li className={clsx(className, 'flex')}>
       <Link
         href={href}
+        target="_blank" // Add this attribute to open link in a new tab
+        rel="noopener noreferrer" // Add these attributes for security and accessibility
         className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
       >
         <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
@@ -65,30 +67,25 @@ export default function About() {
             </h1>
             <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
               <p>
-                I’ve loved making things for as long as I can remember, and
-                wrote my first program when I was 6 years old, just two weeks
-                after my mom brought home the brand new Macintosh LC 550 that I
-                taught myself to type on.
+                After completing my Master`s degree in Biotechnology at the University of Adelaide in 2018,
+                I encountered challenges finding work in my field. Determined to explore new opportunities,
+                I decided to venture into programming. I began learning R and Python for data science,
+                leveraging my background in data analysis. However, as I delved deeper, I discovered my passion
+                for building practical solutions that can make a difference in people`s lives.
+                This led me organically towards software development.
               </p>
               <p>
-                The only thing I loved more than computers as a kid was space.
-                When I was 8, I climbed the 40-foot oak tree at the back of our
-                yard while wearing my older sister’s motorcycle helmet, counted
-                down from three, and jumped — hoping the tree was tall enough
-                that with just a bit of momentum I’d be able to get to orbit.
+                Along this journey, I stumbled upon the fascinating world of machine learning and artificial
+                intelligence. From my very first encounter with developing models using frameworks like Keras,
+                I realized that AI was the path I wanted to pursue. Today, I`m more excited than ever about the
+                possibilities that AI brings, with tools like ChatGPT and MidJourney AI pushing the boundaries of
+                what we can achieve. I created this site to share my enthusiasm for AI and software development,
+                with the hope of inspiring others to create amazing work.
               </p>
               <p>
-                I spent the next few summers indoors working on a rocket design,
-                while I recovered from the multiple surgeries it took to fix my
-                badly broken legs. It took nine iterations, but when I was 15 I
-                sent my dad’s Blackberry into orbit and was able to transmit a
-                photo back down to our family computer from space.
-              </p>
-              <p>
-                Today, I’m the founder of Planetaria, where we’re working on
-                civilian space suits and manned shuttle kits you can assemble at
-                home so that the next generation of kids really <em>can</em>{' '}
-                make it to orbit — from the comfort of their own backyards.
+                Outside of work and programming, I`m also a football (soccer) referee. I`ve been captivated by the
+                beautiful game since I can remember, and I consider myself fortunate to still be involved in it as a referee.
+                What could be better than getting paid to participate in something you`ve loved since childhood?
               </p>
             </div>
           </div>

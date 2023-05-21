@@ -1,101 +1,180 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import projectSetup from '../../images/articles/article_01/image_01.png'
+import dockerFile from '../../images/articles/article_01/image_02.png'
+import dockerBuilding from '../../images/articles/article_01/image_03.png'
 
 export const meta = {
-  author: 'Adam Wathan',
-  date: '2022-09-02',
-  title: 'Introducing Animaginary: High performance web animations',
+  author: 'Ibrahim Saidi',
+  date: '2022-11-04',
+  title: 'How to Serve AI Models with FastAPI and Docker',
   description:
-    'When you’re building a website for a company as ambitious as Planetaria, you need to make an impression. I wanted people to visit our website and see animations that looked more realistic than reality itself.',
+    'Learn to create a containerised FastAPI app serving a HuggingFace model',
 }
 
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
-When you’re building a website for a company as ambitious as Planetaria, you need to make an impression. I wanted people to visit our website and see animations that looked more realistic than reality itself.
+FastAPI is a modern web framework for building APIs with Python 3.7 and above.
+It’s high-performant and yet easy to learn and use. Companies like [Microsoft
+and Uber love it so much that they use it in their machine-learning services](https://fastapi.tiangolo.com/).
 
-To make this possible, we needed to squeeze every drop of performance out of the browser possible. And so Animaginary was born.
+In this tutorial, we’ll learn how to serve machine learning models with FastAPI for
+live inferencing. More specifically, we’ll use a [GPT-2 transformers model from Hugging
+Face](https://huggingface.co/gpt2?text=My+name+is+Mariama%2C+my+favorite) to generate text given a short sentence.
 
-```js
-import { animate } from '@planetaria/animaginary'
+While the app we’ll be creating is really simple, we’ll also get to practice a very
+important skill in MLOps — packaging ML models that can be shared and deployed anywhere[1].
 
-export function MyComponent({ open, children }) {
-  return (
-    <animate.div
-      in={open}
-      animateFrom="opacity-0 scale-95"
-      animateTo="opacity-100 scale-100"
-      duration={350}
-    >
-      {children}
-    </animate.div>
-  )
-}
+## Creating the app
+To get started, create a project in your IDE of choice. I prefer PyCharm for Python projects,
+but feel free to use something like VSCode. Inside your IDE, set up your project like this:
+
+<Image src={projectSetup} alt="" />
+
+The `requirements.txt` file contains all the packages that our app depends on to be functional.
+Let’s list these packages inside your `requirements.txt` file.
+
+```text
+transformers==4.23.1
+tensorflow==2.10.0
+fastapi==0.85.1
+uvicorn[standard]
+```
+We need TensorFlow and transformers to interact with the HuggingFace Models. And we, of course,
+need FastAPI itself and the standard Uvicorn to serve the FastAPI web application.
+
+Note: Your IDE will complain when you try to import packages you haven’t installed. So quickly
+install all the packages in the requirements.txt file before moving on.
+
+```python3 -m pip install -r requirements.txt```
+
+Let’s put the code for our FastAPI web app will be in a main.py module inside a /mlapp directory.
+
+```python
+from transformers import pipeline
+from fastapi import FastAPI, Response
+from pydantic import BaseModel
+
+generator = pipeline('text-generation', model='gpt2')
+
+app = FastAPI()
+
+
+class Body(BaseModel):
+    text: str
+
+
+@app.get('/')
+def root():
+    return Response("<h1>How to Serve AI Models with FastAPI and Docker</h1>")
+
+
+@app.post('/generate')
+def predict(body: Body):
+    results = generator(body.text, max_length=35, num_return_sequences=1)
+    return results[0]
+```
+If you’re new to FastAPI, let’s see what the code above 👆🏾 is doing. We start by importing
+the required packages for our application to run successfully.
+
+Then we declare a generator using the pipeline() function from HuggingFace’s transformers.
+This function allows us to use many pre-trained models from HuggingFace.
+
+In line 7, we instantiate an instance of the FastAPI class called app.
+With this app instance, we can decorate some functions to create endpoints for our application.
+
+The first endpoint is simply the root of our application with some HTML to greet the user of our app.
+
+The next endpoint allows us to post some text to the Uvicorn server. Then FastAPI will process the request
+and return the prediction result given a body of text.
+
+## Containerising our app with Docker: AKA Dockerising our app
+Okay, hold on, hold on….
+
+![Alt Text](https://giphy.com/gifs/abcnetwork-hold-up-wait-a-minute-xULW8MYvpNOfMXfDH2)
+
+🤔🤷🏾‍♂ ️At this point, you might be wondering why we even have to bundle our app into a container. Here’s why.
+
+A container is a portable unit of software that combines the application and all its dependencies into a single package
+that’s agnostic to the underlying host OS. It removes the need to build complex environments and simplifies the application
+development-to-deployment process.[2]
+
+We’ll use Docker to containerise our application into a portable Docker image that can be run in any environment, such as
+AWS ECS or Azure ACI, consistently.
+
+To give you a mental model of what’s happening when we containerise our app,
+
+- we begin with a Dockerfile which contains all the instructions to create our Docker image ( which is what we can share or deploy to other services).
+- Then we can run the application that’s packaged inside this docker image by simply running the image.
+- When we say a container, we are referring to this running instance of the Docker image👍🏾👌🏾.
+
+<Image src={dockerFile} alt="" />
+
+Let’s now create the Dockerfile for our application. As mentioned above, this file contains the instructions required to containerise our app.
+
+```Dockerfile
+FROM python:3.10
+
+WORKDIR /code
+
+COPY ./requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./mlapp /code/app
+
+CMD ["uvicorn","app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-Animaginary is our new web animation library that redefines what you thought was possible on the web. Hand-written in optimized WASM, Animaginary can even animate the `height` property of an element at 60fps.
+`FROM python:3.10` : In the Dockerfile, we’re going to start with the Python 3.10 image.
 
-## Sermone fata
+`COPY ./requirements.txt /code/requirements.txt`: Then we’ll copy the requirements into the container where we’re building it.
+We copy it into the directory called /code which will be at the very root.
 
-Lorem markdownum, bracchia in redibam! Terque unda puppi nec, linguae posterior
-in utraque respicere candidus Mimasque formae; quae conantem cervice. Parcite
-variatus, redolentia adeunt. Tyrioque dies, naufraga sua adit partibus celanda
-torquere temptata, erit maneat et ramos, [iam](#) ait dominari
-potitus! Tibi litora matremque fumantia condi radicibus opusque.
+`WORKDIR /code` : We change our working directory into `/code`.
 
-Deus feram verumque, fecit, ira tamen, terras per alienae victum. Mutantur
-levitate quas ubi arcum ripas oculos abest. Adest [commissaque
-victae](#) in gemitus nectareis ire diva
-dotibus ora, et findi huic invenit; fatis? Fractaque dare superinposita
-nimiumque simulatoremque sanguine, at voce aestibus diu! Quid veterum hausit tu
-nil utinam paternos ima, commentaque.
+`RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt`: Then we will install the requirements.
 
-```c
-exbibyte_wins = gigahertz(3);
-grayscaleUtilityClient = control_uat;
-pcmciaHibernate = oop_virus_console(text_mountain);
-if (stateWaisFirewire >= -2) {
-    jfs = 647065 / ldapVrml(tutorialRestore, 85);
-    metal_runtime_parse = roomComputingResolution - toolbarUpload +
-            ipx_nvram_open;
-} else {
-    maximizeSidebar *= suffix_url(flatbed + 2, requirements_encoding_node +
-            only_qbe_media, minicomputer);
-}
-```
+`COPY ./mlapp /code/app`: And finally, we copy the local contents of anything that’s in the `/mlapp` directory into the container’s `/code/app` directory.
 
-Aere repetiti cognataque natus. Habebat vela solutis saepe munus nondum adhuc
-oscula nomina pignora corpus deserat.
+`CMD [“uvicorn”,”app.main:app”, “ — host”, “0.0.0.0”, “ — port”, “8000”]` : Finally, we’ll run it with uvicorn on host 0.0.0.0 and
+we’re going to run the function called app that’s inside the main.py module.
 
-## Lethaei Pindumve me quae dinumerat Pavor
+## Interact with the API
 
-Idem se saxa fata pollentibus geminos; quos pedibus. Est urnis Herses omnes nec
-divite: et ille illa furit sim verbis Cyllenius.
+FastAPI makes it easy to test our API by providing us with a `/docs` endpoint out of the box for us to interact with our API.
 
-1. Captus inpleverunt collo
-2. Nec nam placebant
-3. Siquos vulgus
-4. Dictis carissime fugae
-5. A tacitos nulla viginti
+We’ve done all the hard work, and now what’s left is for us to build and run our docker image and interact with the FastAPI web app that’s bundled inside it.
 
-Ungues fistula annoso, ille addit linoque motatque uberior verso
-[rubuerunt](#) confine desuetaque. _Sanguine_ anteit
-emerguntque expugnacior est pennas iniqui ecce **haeret** genus: peiora imagine
-fossas Cephisos formosa! Refugitque amata [refelli](#)
-supplex. Summa brevis vetuere tenebas, hostes vetantis, suppressit, arreptum
-regna. Postquam conpescit iuvenis habet corpus, et erratica, perdere, tot mota
-ars talis.
+**Make sure you have docker installed and is running on your machine before getting started**
 
-```c
-digital.webcam_dual_frequency = webmasterMms;
-if (5 + language_standalone_google) {
-    cc_inbox_layout *= file_character;
-    task += p;
-    lockUnicode += enterprise_monochrome(tokenFunctionPersonal, keyVirtual,
-            adf);
-}
-windows_binary_esports(87734, array(restoreRomTopology, adRaw(407314),
-        dongleBashThumbnail), interpreter);
-```
+First, we build the docker image to bundle our app that’s in `mlapp/main.py`.
+You can give the image name by tagging it ( `-t mlops-fastapi` in the example below).
 
-Sit volat naturam; motu Cancri. Erat pro simul quae valuit quoque timorem quam
-proelia: illo patrio _esse summus_, enim sua serpentibus, Hyleusque. Est coniuge
-recuso; refert Coroniden ignotos manat, adfectu.
+```bash
+# Terminal / Run from project's root directory
+docker build -t mlops-fastapi .
+````
+<Image src={dockerBuilding} alt="" />
+
+Let’s now use that image to run a Docker container on port 8000 of our local machine.
+
+```bash
+# Terminal
+docker run -p 8000:8000 mlops-fastapi
+````
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/9iRAN1OpYd8/0.jpg)](http://www.youtube.com/watch?v=9iRAN1OpYd8)
+
+## Closing remarks
+And there you have it. Congrats on making it to the end 🥳.
+We’ve successfully built a FastAPI application that can serve a Machine Learning model.
+While what we did here was very simple, you have taken your first steps towards MLOps.
+
+You can find the complete code here.
+
+## Resources
+[1]https://www.oreilly.com/videos/packaging-machine-learning/50116VIDEOPAIML/
+
+[2] https://developer.nvidia.com/ai-hpc-containers
+
+[3] https://www.youtube.com/watch?v=pTFZFxd4hOI&t=1010s

@@ -1,0 +1,299 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import appStructure from '../../images/articles/article_02/image_01.png'
+import helloWorld from '../../images/articles/article_02/image_02.png'
+
+export const meta = {
+  author: 'Ibrahim',
+  date: '2022-08-20',
+  title: 'Create a Simple Stock Screening App Using Streamlit',
+  description:
+    'Learn to Build a Stock Screening App Using Streamlit and an API',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+Imagine you’ve got some hard-earned money and want to invest it in the stock market.
+Being the savvy investor you are, you will only invest in companies that meet a particular standard.
+You don’t want your money invested in mediocre companies.
+
+Maybe you already have a [stock screening script](https://medium.datadriveninvestor.com/build-your-own-stock-screener-in-3-minutes-df4ff7e461e5), but you decide an application is the way to go.
+This article shows you how to do just that. You’ll learn to build a stock screener app in Python.
+
+## High-Level Overview of the Stock Screening App
+In this article, we’ll build a stock screening web app in Python that will allow us to find stocks
+that meet our investment criteria.
+
+To achieve this, we will use the following:
+
+- `streamlit` — A Python web framework that will act as our frontend for the app.
+- `Financial Modeling Prep’s API` — We will communicate with this API to get the data we need for our application.
+- `requests` — allows us to send HTTP requests in Python easily. We’ll use this to communicate with the API.
+- `pandas` — we’ll use this for data manipulation.
+
+🏃🏾‍♂️🏃🏾‍♂️🧑🏾‍💻🧑🏾‍💻
+
+We should take a minute to think about the structure of the app.
+Here’s the simple app we’re developing:
+
+<Image src={appStructure} alt="" />
+
+- The left column is where all the screening parameters
+- The middle column will contain the results from our inputs
+- Below the results, we’ll have a button to download the results
+
+## Setting up your Working Environment
+Before embarking on any project, it’s considered good practice to use virtual environments.
+This helps isolate your dependencies and makes your project reproducible.
+
+I prefer doing my Python projects in Pycharm. One of the reasons for this is that Pycharm automatically
+creates a virtual environment for every new project you start ( unless you specifically ask it not to!).
+
+For this article, I’m going to assume your IDE doesn’t do this for you. So, very quickly, here’s how you
+would set up a virtual environment called venv inside your project’s directory, from the command line.
+
+```$ python3 -m venv venv```
+
+Now your project has a virtual environment, you need to activate it. Once activated, you should see the
+name of your virtual environment (in brackets) before the dollar sign, as shown below.
+
+```
+$ source venv/bin/activate
+(venv) $
+```
+
+Great. You’re now set to install the external packages needed for our project. Before that, however,
+
+## Creating files
+
+At this stage, we have created a virtual environment for our project and obtained the API key from Financial
+Modeling Prep’s developer site. It’s time to build our app.
+
+Our project is empty for now. Let’s do something about that. Create the files we’ll need for the app.
+Here are the files we’ll be creating for the app:
+
+- `main.py` — will house the code for the user interface.
+- `secrets.toml` — this will hide/store our API credentials.
+- `api_logic.py` — This will contain the logic for interacting with the Financial Modeling Prep API.
+
+Let’s start creating these files, starting with the secrets.toml file. This file will reside inside a
+directory called .streamlit (giving you a .streamlit/secrets.toml file path). Here’s how we create it:
+
+```
+(venv) $ mkdir .streamlit
+(venv) $ touch secrets.toml
+```
+
+Store your API key inside the secrets.toml file.
+
+```
+[credentials]
+key = "Your API Key Here"
+```
+We can simply retrieve our API by calling `st.secrets.api_credentials.key`.
+
+With our API key safely stored, let’s create the other files we need for our app.
+The file requests_logic.py is where we’ll query the API and return the result in a pandas DataFrame.
+
+The main.py file is where our front-end logic will go. Streamlit comes pre-packed with many
+widgets and layouts for us to use without any front-end experience.
+
+```
+(venv) $ touch main.py api_logic.py
+```
+## From pip install to hello world
+The stage is now set for adding code to our files and finally building the app.
+We’ll start by installing the packages we need for our app ( as revealed earlier in the article).
+Install these packages from the command line one at a time calling `pip install package_name`.
+For example, `pip install streamlit` will install the `streamlit` package.
+
+Having installed Streamlit, it’s easy to get it up and running in your web browser.
+From your command line, run the code below. This will spin up a hello world `Streamlit` app.
+
+``` (venv) $ streamlit hello```
+
+<Image src={helloWorld} alt="" />
+
+Okay. We’re making progress. Let’s add some code to our files, starting with the `api_logic.py`
+file. The code should be self-explanatory, but for the sake of clarification, it is also explained
+in the module-level documentation, inside three double quotes (“”” ). Copy and paste the following code into
+the `api_logic.py` file.
+
+```python
+"""
+This module retrieves stock screening results from the fmp API.
+Separation of concerns is ideal in software development!
+This module provides an easy way to retrieve stocks that suit our investment criteria.
+Another module can then access these results by importing this module.
+Available Functions:
+- get_screener_data: Searches for stocks based on query parameters
+"""
+
+# Imports
+import pandas as pd
+import requests
+
+
+# Define a stock screening function that returns a DataFrame
+def get_screener_data(api_key: str, marketcapmorethan: int = 1000000000, betalessthan: int = 1,
+                      volmorethan: int = 10000, sector: str = "Technology", exchange: str = "NASDAQ",
+                      dividendmorethan: int = 0, limit: int = 100) -> pd.DataFrame:
+    """Search for stocks that meet a certain criteria.
+    This function allows you to search for stocks from the financial mng prep API.
+    The API allows you to search for stocks that meet your investment criteria.
+    Args:
+    	- api_key: API key to access the financial modeling prep API
+        - marketcapmorethan: Minimum market capitalisation of the company
+        - betamorethan: minimum beta (volatility)
+        - volmorethan: minimum stock trading volume (Daily?)
+        - sector: Sector of the company
+        - exchange: Exchange where the company is listed
+        - dividendmorethan: Minimum dividends paid out by the company
+        - limit: Limit of results returned by the API
+    Returns:
+    	A DataFrame of the stocks that match your criteria.
+    """
+
+    # Set up the parameters dictionary
+    params = {
+        "marketCapMoreThan": "{}".format(marketcapmorethan),
+        "betaLessThan": "{}".format(betalessthan),
+        "volMoreThan": "{}".format(volmorethan),
+        "sector": "{}".format(sector),
+        "exchange": "{}".format(exchange),
+        "dividendMoreThan": "{}".format(dividendmorethan),
+        "limit": "{}".format(limit),
+        "apikey": "{}".format(api_key)
+    }
+
+    # Define the API URL
+    api_url = "https://financialmodelingprep.com/api/v3/stock-screener"
+    # Call the  API with requests and save just the data
+    response = requests.get(api_url, params=params)
+    data = response.json()
+    df = pd.DataFrame(data)
+    return df
+```
+## Why do we have two modules?
+
+Before we add code to our main.py module, let’s think about why we have these two files in
+the first place. We briefly touched on this in the module-level documentation of `api_logic.py`,
+but let’s explore this further.
+
+What we’re doing is separating the application into two modules — the application logic and
+the business logic.
+
+The business logic of our app is the core algorithms and functions that make our app unique.
+These are elements of the app that would work just fine outside an interactive context[1].
+In our stock screener application, the api_logic.py file contains our app’s business logic.
+
+The application logic is what makes our app interactive[1]. This includes the overall structure
+of the app, buttons, interactivity and so on. These components provide a user interface to
+your business logic(i.e the frontend).
+
+Separating the application logic and the business logic makes the application easier to maintain,
+easier to decipher, and facilitates collaboration[1]. As Colin Fay reminds us in
+his “Engineering Shiny” book:
+
+**Long scripts are almost always synonymous with complexity when it comes to building software.**
+
+Our app is almost finished. Let’s now complete the final module of our app — the front-end portion of the app.
+Copy and paste this code into the `main.py` file.
+
+```python
+"""This module provides the frontend functionality to interacting with the fmp API.
+This module communicates with the `api_logic` module and updates it based on the user inputs.
+The user's inputs are sent to the api_logic module, and this module displays the results as a DataFrame.
+Available Functions:
+- stock_screener: Provides the user interface to the api_logic module.
+"""
+
+# Imports
+import streamlit as st
+from api_logic import get_screener_data
+
+# Config app
+st.set_page_config(page_title="Stock Screener", layout="wide")
+st.title("Stock Screener")
+
+
+# Selection options
+sector_options = ("Consumer Cyclical", "Energy", "Technology", "Industrials", "Financial Services", "Basic Materials",
+                  "Communication Services", "Consumer Defensive", "Healthcare", "Real Estate", "Utilities",
+                  "Industrial Goods", "Financial", "Services", "Conglomerates")
+
+exchange_options = ("nyse", "nasdaq", "amex", "euronext", "tsx", "etf", "mutual_fund")
+
+
+# Define a Streamlit UI function
+def stock_screener(my_api_key: str):
+    """Provide the User interface to the financial modeling Prep API.
+    This function provides the input widgets to interact with the get_screener_data()
+    function from the api_logic module.
+    Args:
+    	my_api_key: The API key required for accessing the fmp API
+    Returns:
+    	A DataFrame of the stocks matching the user's inputs.
+    """
+    # Placing Input widgets in sidebar
+    with st.sidebar.form(key="my_form", clear_on_submit=False):
+        market_cap = st.number_input(label="MarketCapMoreThan", value=1000000, min_value=1000000)
+        beta = st.number_input(label="BetaLessThan", value=1, max_value=2)
+        volume = st.number_input(label="VolMoreThan", value=10000)
+        sector = st.selectbox(label="Sector", options=sector_options)
+        exchange = st.selectbox(label="Exchange", options=exchange_options)
+        dividend = st.number_input(label="DividendMoreThan", value=0)
+        # Submit button
+        pressed = st.form_submit_button(label="Submit")
+
+    # If Submit button is pressed, then retrieve stock screener results from API
+    if not pressed:
+        results = get_screener_data(api_key=my_api_key)
+        st.dataframe(results, height=800)
+
+    else:
+        results = get_screener_data(
+                    api_key=my_api_key,
+                    marketcapmorethan=market_cap,
+                    betalessthan=beta,
+                    volmorethan=volume,
+                    sector=sector,
+                    exchange=exchange,
+                    dividendmorethan=dividend
+        )
+        st.dataframe(results, height=800)
+
+# Download screening results
+    @st.cache
+    def convert_df(df):
+        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return df.to_csv().encode('utf-8')
+
+    csv = convert_df(results)
+
+    st.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='screener_data.csv',
+        mime='text/csv',
+    )
+
+
+# Call the function with API credentials
+stock_screener(my_api_key=st.secrets.api_credentials.key)
+```
+
+And that’s everything. To see the app you’ve created, run the following command:
+
+```(venv) $ streamlit run main.py```
+
+🚀🚀🚀🚀🚀🚀🥁🥁🥁🥁🥁🥁🥁🥁🥁💪🏾💪🏾💪🏾💪🏾💪🏾💪🏾💪🏾💪🏾💪🏾
+
+Congrats! You did more than just build a simple stock screening app. You’ve also mastered key software
+engineering concepts. You now understand the importance of working with virtual environments and
+separating your app’s business logic from the application logic.
+
+Thanks for reading. Get the full code [here](https://github.com/Saidiibrahim/Stock_Screener). Until next time. 👋🏾✌🏾
+
+## References
+[1] [Engineering Shiny](https://engineering-shiny.org/index.html) by Colin Fay

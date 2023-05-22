@@ -30,21 +30,7 @@ const projects = [
       'Chatbot made with GPT4 from OpenAI....',
     link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
     logo: logoHelioStream,
-  },
-  {
-    name: 'FileQnA',
-    description:
-      'An app able to answer questions based on a file.',
-    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
-    logo: logoCosmos,
-  },
-  {
-    name: 'DataBot',
-    description:
-      'Your own personal data analyst.',
-    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
-    logo: logoOpenShuttle,
-  },
+  }
 ]
 
 function LinkIcon(props) {

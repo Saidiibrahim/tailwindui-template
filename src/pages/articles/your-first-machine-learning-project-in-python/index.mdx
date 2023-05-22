@@ -1,0 +1,388 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import designSystem from './planetaria-design-system.png'
+import headOutput from '../../../images/articles/article_03/image_01.png'
+import renameColumns from '../../../images/articles/article_03/image_02.png'
+import summaryStats from '../../../images/articles/article_03/image_03.png'
+import dataframeInfo from '../../../images/articles/article_03/image_05.png'
+import missingVals from '../../../images/articles/article_03/image_06.png'
+import imputeMissing from '../../../images/articles/article_03/image_07.png'
+
+export const meta = {
+  author: 'Ibrahim',
+  date: '2022-01-29',
+  title: 'Your First Machine Learning Project in Python',
+  description:
+    'Most companies try to stay ahead of the curve when it comes to visual design, but for Planetaria we needed to create a brand that would still inspire us 100 years from now when humanity has spread across our entire solar system.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+<Image src={designSystem} alt="" />
+
+You work for a commercial bank in Australia. Recently, your bank has been receiving many applications for credit cards.
+Your bank has had to manually analyse these applications in the past, which is mundane, error-prone and time-consuming (and time is money!).
+Your manager wants you to find a way to automate this task with the power of machine learning.
+
+In this article, we will build an automatic credit card approval predictor using machine learning, and hopefully get yourself a promotion! 🤩.
+
+```
+Author's note:
+* Some outputs are not included to keep this article short.
+* Code chunks in grey are outputs only
+```
+
+We’ll use a dataset about credit card approvals[1]. The article is structured as follows:
+
+- We’ll begin by loading and viewing the dataset.
+- We’ll inspect the data and find that it contains numerical and categorical features, values of different ranges, and a few missing entries.
+- To ensure our model can make good predictions, we’ll need to preprocess the dataset.
+- Once our data is in good shape, we will proceed to build a model that can predict whether an individual’s application for a credit card will be accepted.
+
+## Exploratory Data Analysis
+
+Let’s start with loading and viewing the dataset. A glance at the dataset shows that all the
+feature names are anonymised to protect the data’s confidentiality.
+
+```python
+# Import pandas
+import pandas as pd
+
+# Read dataset
+applcns = pd.read_csv("datasets/cc_approvals.data", header = None)
+
+# Inspect data
+applcns.head()
+```
+
+<Image src={headOutput} alt="" />
+
+Working with anonymised data will be pretty confusing.
+So let’s give these features working names based on the data type[2].
+
+```python
+# Rename columns
+applcns.columns = ["Gender", "Age", "Debt", "Married", "BankCustomer", "Educationalevel", "Ethnicity",
+               "YearsEmployed", "PriorDefault", "Employed", "CreditScore", "DriversLicense",
+               "Citizen", "ZipCode", "Income", "ApprovalStatus"]
+
+applcns.head()
+```
+
+<Image src={renameColumns} alt="" />
+
+Notice that the dataset contains both numerical and categorical features.
+We can quickly fix this with some preprocessing, but first, we should see if
+the dataset has other issues that need fixing.
+
+```python
+# Print summary statistics
+applcns_description = applcns.describe()
+print(applcns_description)
+
+print("\n")
+
+# Show DataFrame info
+applcns_info = applcns.info()
+print(applcns_info)
+
+print("\n")
+
+# Check for missing values
+applcns.tail(17)
+```
+
+<Image src={summaryStats} alt="" />
+
+<Image src={dataframeInfo} alt="" />
+
+## Transforming the dataset (part i)
+
+Upon further inspection, we find some issues that will affect the performance of our
+machine learning model(s) if they go unchanged:
+
+- Our dataset contains both numeric and categorical data (data types float64, int64 and object). Specifically, `Debt`, `YearsEmployed`, `CreditScore`, and `Income` are numeric features, while the rest are categorical.
+- The summary statistics show that the dataset has different ranges(0–28, 2–67, and 1017–100000).
+- Finally, the dataset contains missing values labelled with “?”, which we’ll need to fix.
+
+Now, let’s replace these missing values with NaNs.
+
+```python
+# Import numpy
+import numpy as np
+
+# Replace the '?'s with NaN
+applcns = applcns.replace("?", np.nan)
+
+# Verify the number of missing values
+applcns.isnull().sum()
+```
+
+<Image src={missingVals} alt="" />
+
+## Transforming the dataset (part ii)
+
+Great. We now have our missing values as NaNs, which makes it easier to take care of
+them before we can begin making any predictions. You might be wondering why we can’t
+just ignore missing values at this stage. Well, missing values are holes in your data.
+And you can’t make a prediction where you have missing values. We have to figure out how
+to plug these gaps in our data. Missing values may contain helpful information about the dataset,
+so ignoring missing values can lead to a machine learning model with poor performance.
+Besides, models such as [Linear discriminant analysis](https://en.wikipedia.org/wiki/Linear_discriminant_analysis) (LDA) can’t deal with missing values
+implicitly.
+
+So, let’s impute (i.e. fix) these missing values with a mean imputation strategy.
+
+```python
+# Numeric columns
+numeric_columns = ["Age", "Debt", "YearsEmployed", "CreditScore", "Income"]
+# Impute missing values using mean imputation
+applcns[numeric_columns] = applcns[numeric_columns].fillna(applcns.mean())
+
+# Verify the number of missing values again
+applcns.isnull().sum()
+```
+
+<Image src={imputeMissing} alt="" />
+
+## Transforming the dataset (part iii)
+
+Great, missing values in the numeric columns have been fixed. But we still have non-numeric
+columns with missing values (`Gender`, `Married`, `BankCustomer`, `Educationallevel`, `Ethnicity` and `ZipCode`).
+
+Since these columns are categorical, mean imputation is not the right approach here.
+We need a different way to impute these. The best way to deal with missing values for
+categorical data is to use the most frequent values in the respective columns.
+
+```python
+# Iterate over every column of applcns
+for col in applcns.columns:
+    # Is the column of object type
+    if applcns[col].dtype == 'object':
+        # Impute with the most frequent value
+        applcns = applcns.fillna(applcns[col].value_counts().index[0])
+
+# Verify the number of missing values
+print(applcns.isnull().sum())
+```
+
+## Data preprocessing (part i)
+
+We have now successfully dealt with missing values. However, before we can even begin
+building our machine learning model, there are some essential data preprocessing we need to do.
+Let’s divide these up as follows:
+
+1. Convert categorical data to numeric.
+2. Split the data into random train and test subsets.
+3. Transform features by scaling each to a uniform range.
+
+Let’s start with the first step of our preprocessing-converting categorical values to numeric.
+Why are we doing this? First, machine learning algorithms work on numbers, not on strings.
+
+So we need a numeric representation of these strings. Secondly, we never know ahead of time how
+long a string is, so computers take more time processing strings than numbers, which have a
+precise number of bits. Furthermore, many machine learning models such as XGBoost will only
+work with strictly numeric data. We’re going to do this conversion using a technique called
+label encoding.
+
+```python
+# Import scikit-learn's LabelEncoder
+from sklearn.preprocessing import LabelEncoder
+
+# Instantiate LabelEncoder
+le = LabelEncoder()
+
+# Iterate over each column's values and extract their dtypes
+for col in applcns.columns.to_numpy():
+    # If dtype is object
+    if applcns[col].dtype =='object':
+    # Tranform values to numeric using LabelEncoder
+        applcns[col]=le.fit_transform(applcns[col])
+```
+
+## Splitting the dataset into train and test subsets
+
+To put things into perspective, we’re trying to predict the credit
+ApprovalStatus using the other 15 features.
+
+With all categorical values converted to numeric ones, we’re now ready to build our model
+to make predictions. But how do we know if the model is making correct predictions?
+That is, how do we ensure that our model’s predictions generalise well to unseen data.
+A common approach is to split data into a training set and a test set.
+
+Also, note that [machine learning algorithms don’t work well when they ingest too many features](https://innovation.alteryx.com/feature-engineering-vs-feature-selection/#:~:text=Feature%20engineering%20enables%20you%20to,features%20to%20a%20manageable%20number.).
+Let’s ensure that only the best ones are used in our modelling. In the world of machine learning,
+this is known as feature selection. From our dataset, features such as ZipCode and DriversLicense
+do not help predict credit card approvals. So, they’re good candidates to drop if we want to improve
+our model design.
+
+```python
+# Import the train_test_split function
+from sklearn.model_selection import train_test_split
+
+# Drop DriversLicense and ZipCode, then convert the DataFrame to a NumPy array
+applcns = applcns.drop(["DriversLicense", "ZipCode"], axis=1)
+applcns = applcns.to_numpy()
+
+# Segregate features and labels into separate variables
+X,y = applcns[:,0:13] , applcns[:,13]
+
+# Split into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                y,
+                                test_size=0.33,
+                                random_state=42)
+```
+
+## Data preprocessing (part ii)
+With the data now split into train and test sets, only one preprocessing step of scaling
+remains before we can fit a model to the data. But first, we should try to understand real-world
+applications of these scaled values.
+
+Let’s use CreditScore as an example. Individuals are considered more financially trustworthy if
+they have a higher credit score. The maximum credit score is one as we’re rescaling all the
+values between 0 and 1.
+
+```python
+# Import the MinMaxScaler function
+from sklearn.preprocessing import MinMaxScaler
+
+# Instantiate MinMaxScaler and rescale X_train and X_test
+scaler = MinMaxScaler(feature_range=(0, 1))
+rescaledX_train = scaler.fit_transform(X_train)
+rescaledX_test = scaler.transform(X_test)
+```
+## Building a classification model
+
+Finally, you can start building that predictive model. Predicting whether a credit card application
+will be approved or not is a classification problem. Most entries in our dataset have a “Denied” status.
+Specifically, 383 out of the 690 applications (55.5%) were denied and 307 (44.5%) were approved[1].
+
+These statistics provide a good benchmark to evaluate the accuracy of our machine learning model.
+Now, we need to decide which classification model to use. Although outside this project’s scope,
+we’ll assume that the features that affect credit card approval are correlated. Because of this,
+generalised linear models are the best option. The generalised linear model we’ll use is a Logistic Regression model.
+
+```python
+# Import LogisticRegression
+from sklearn.linear_model import LogisticRegression # logreg is a clf model!
+
+# Instantiate a LogisticRegression classifier
+logreg_clf = LogisticRegression()
+
+# Fit model to the train set
+logreg_clf.fit(rescaledX_train, y_train)
+```
+## Evaluating our model
+
+It’s time to evaluate how good our model is at predicting whether a credit card application
+will be approved or not. At this stage, we have a classifier (classification model) that has
+learned from the labelled data we passed to it (train data).
+
+Let’s now evaluate how well our model performs in predicting labels of unseen data (test dataset).
+In other words, we’re evaluating our model for [classification accuracy](https://developers.google.com/machine-learning/crash-course/classification/accuracy).
+
+In addition to this, we must also check that our model can correctly predict applications that were denied.
+If our model performs poorly in this area, we might approve applications that should be rejected.
+To help us with this, we’ll look at the [confusion matrix](https://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/) of our model’s predictions.
+
+```python
+# Import the confusion_matrix function
+from sklearn.metrics import confusion_matrix
+
+# Predict labels of unseen data using model and store it
+predictions = logreg_clf.predict(rescaledX_test)
+
+# Get the accuracy score of logreg model and print it
+print("Logistic regression classifier has accuracy of: ",
+      logreg_clf.score(rescaledX_test, y_test))
+
+# Print the confusion matrix of the logreg model
+confusion_matrix(y_test, predictions)
+```
+
+```
+Logistic regression classifier has accuracy of:  0.8421052631578947
+array([[94,  9],
+       [27, 98]])
+```
+
+When making predictions, especially when there’s a binary outcome, the confusion matrix
+is one of the first outputs we should review. When we have a binary result, the confusion
+matrix is a 2x2 matrix that shows how your predictions faired across the two outcomes.
+For example, for predictions of “Denied” that were denied ( or true negatives),
+we look at the 0, 0 square of the matrix. Likewise, predictions of “Approved”
+that were approved ( or true positives) are in the 1, 1 square.
+
+## Improving our model with hyperparameter tuning
+
+Our model produced an accuracy score of nearly 84%, which is pretty good.
+Let’s see if we can improve this score. Enter hyperparameter tuning.
+
+Hyperparameters are the model’s parameters that we can tweak before training occurs.
+This tuning consists of selecting hyperparameters to test, then running our model with
+various values of these hyperparameters. For each run of the model, we keep track of how
+well the model could predict credit card approvals for a specified accuracy metric and keep
+track of the hyperparameters used.
+
+With this in mind, let’s do a [grid search](https://machinelearningmastery.com/how-to-tune-algorithm-parameters-with-scikit-learn/) of our model’s hyperparameters. A quick review of
+`scikit-learn`’s [documentation for logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) reveals several hyperparameters.
+For simplicity, we’ll grid search over these:
+- max_iter
+- tol
+
+Grid searching in `scikit-learn` is possible using the `GridSearchCV()` function from the
+model_selection module. One of `GridSearchCV`’s parameters is a dictionary of the grid of
+parameters. So let’s define the grid of hyperparameter values and convert them to a single
+dictionary format.
+
+```python
+# Define the grid of values for hyperparameters
+max_iter = [100, 150, 200]
+tol = [0.01, 0.001, 0.0001]
+
+# Convert hyperparameter grid to dictionary
+param_grid = dict(tol = tol, max_iter = max_iter)
+```
+Next, we’ll instantiate GridSearchCV() with the first model we made, except this time,
+we use the dataset with all the features (X) to train our model. Remember that we still
+need to use the scaled version of X.
+
+Let’s also tell `GridSearchCV()` to run our model on various validation combinations by performing
+fivefold cross-validation.
+
+```python
+# Import GridSearchCV
+from sklearn.model_selection import GridSearchCV
+
+# Instantiate GridSearchCV with the required parameters
+grid_model = GridSearchCV(estimator= logreg_clf, param_grid= param_grid, cv= 5)
+
+# Rescale X
+rescaledX = scaler.fit_transform(X)
+
+# Train grid_model with rescaled X
+grid_model_result = grid_model.fit(rescaledX, y)
+
+# Summarize results
+print("Best: %f using %s" % (grid_model_result.best_score_, grid_model_result.best_params_))
+```
+
+```Best: 0.850725 using {'max_iter': 100, 'tol': 0.01}```
+
+## References:
+
+1. Quinlan, Quinlan. [Credit Approval](http://archive.ics.uci.edu/ml/datasets/credit+approval). UCI Machine Learning Repository.
+2. Features from this [blog](http://rstudio-pubs-static.s3.amazonaws.com/73039_9946de135c0a49daa7a0a9eda4a67a72.html)
+
+## Helpful links:
+
+- NumPy data types for [special values](https://docs.scipy.org/doc/numpy-1.13.0/user/misc.html)
+- NumPy indexing and slicing [tutorial](https://www.tutorialspoint.com/numpy/numpy_indexing_and_slicing.htm)
+- Checking data types of the columns in a DataFrame [Stack Overflow answer](https://stackoverflow.com/questions/40353079/pandas-how-to-check-dtype-for-all-columns-in-a-dataframe)
+- sklearn `LabelEncoder` class [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html)
+- sklearn `train_test_split()` method [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html)
+- sklearn’s `MinMaxScaler` class [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html)
+- sklearn Logistic Regression [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
+- sklearn confusion matrix [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html)
+- Hyperparameter Optimization in Machine Learning Models [tutorial](https://www.datacamp.com/tutorial/parameter-optimization-machine-learning-models)

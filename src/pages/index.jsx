@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 //TODO: Make tab icon more colourful
-//TODO: Add my own photos on homepage
 
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'

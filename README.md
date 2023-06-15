@@ -1,13 +1,12 @@
 ## TODO
 
 - [x] Fix About page - Use ChatGPT for content.
-- [ ] Update links to keep current page.
-- [ ] Domain transfer from AWS to Vercel.
-- [ ] Include different images ( refereeing, Midjourney AI).
-- [ ] Update Articles content.
+- [x] Update links to keep current page.
+- [x] Include different images ( refereeing, Midjourney AI).
+- [x] Update Articles content.
+- [x] Mention URL on Medium and Linkedin.
 - [ ] Work on projects mentioned.
-- [ ] Mention URL on Medium and Linkedin.
-- [ ] Add page for books I read, or I've read.
+- [ ] Buy ibrahimscode.ai domain.
 
 # Spotlight
 

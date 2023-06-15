@@ -25,10 +25,10 @@ const projects = [
     logo: logoAnimaginary,
   },
   {
-    name: 'Chatbot',
+    name: 'RefGPT',
     description:
-      'Chatbot made with GPT4 from OpenAI....',
-    link: { href: 'https://github.com/Saidiibrahim', label: 'github.com' },
+      'A chatbot that answers football (soccer) refereeing related questions',
+    link: { href: 'https://saidiibrahim-myrefgpt-main-t2qu0j.streamlit.app/', label: 'github.com' },
     logo: logoHelioStream,
   }
 ]
